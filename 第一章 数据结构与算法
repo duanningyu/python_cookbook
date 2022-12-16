@@ -1,0 +1,167 @@
+第一章 数据结构与算法
+1.1 解压序列赋值给多个变量
+  例：p = (4, 5)
+      x, y = p
+      x = 4
+  讨论：实际上，这种解压赋值可以用在任何可迭代对象上面，而不仅仅是列表或者元组。包括字符串，文件对象，迭代器和生成器。
+1.2 解压可迭代对象赋值给多个变量
+	例：record = ('Dave', 'dave@example.com', '773-555-1212', '847-555-1212')
+		 name, email, *phone_numbers = record
+		 phone_numbers = ['773-555-1212', '847-555-1212']
+  讨论：扩展的迭代解压语法是专门为解压不确定个数或任意个数元素的可迭代对象而设计的。通常，这些可迭代对象的元素结构有确定的规则（比如第 1 个元素后面都是电话号码），星号表达式让开发人员可以很容易的利用这些规则来解压出元素来。而不是通过一些比较复杂的手段去获取这些关联的元素值。
+1.3 保留最后N个元素
+  例：from collections import deque
+			>>> q = deque(maxlen=3)
+      >>> q.append(1)
+      >>> q.append(2)
+      >>> q.append(3)
+      >>> q
+      deque([1, 2, 3], maxlen=3)
+      >>> q.append(4)
+      >>> q
+      deque([2, 3, 4], maxlen=3)
+      >>> q.append(5)
+      >>> q
+      deque([3, 4, 5], maxlen=3)
+  讨论：使用 deque(maxlen=N) 构造函数会新建一个固定大小的队列。当新的元素加入并且这个队列已满的时候，最老的元素会自动被移除掉。你可以在队列的两端执行添加和弹出元素的操作。popleft()和appendleft()
+1.4 查找最大或最小的N个元素
+  例：import heapq
+      nums = [1, 8, 2, 23, 7, -4, 18, 23, 42, 37, 2]
+      print(heapq.nlargest(3, nums)) # Prints [42, 37, 23]
+      print(heapq.nsmallest(3, nums)) # Prints [-4, 1, 2]
+  讨论：当要查找的元素个数相对比较小的时候，函数 nlargest() 和 nsmallest() 是很合适的。如果你仅仅想查找唯一的最小或最大（N=1）的元素的话，那么使用 min() 和max() 函数会更快些。类似的，如果 N 的大小和集合大小接近的时候，通常先排序这个集合然后再使用切片操作会更快点（sorted(items)[:N] 或者是 sorted(items)[-N:]）。需要在正确场合使用函数 nlargest() 和 nsmallest() 才能发挥它们的优势（如果N 快接近集合大小了，那么使用排序操作会更好些）。
+1.5 实现一个优先级队列
+		没看懂
+1.6 字典中的键映射多个值
+  例：from collections import defaultdict
+    d = defaultdict(list)
+    for key, value in pairs:
+    d[key].append(value)
+  讨论：可以很方便的使用 collections 模块中的 defaultdict 来构造这样的字典。
+    defaultdict 的一个特征是它会自动初始化每个 key 刚开始对应的值，所以你只需要
+    关注添加元素操作了。
+1.7 字典排序  ---不用看
+  Key值是按插入的顺序来的，即使更新Key的Value值，Key的顺序也不会被改变。
+  例：from collections import OrderedDict
+    d = OrderedDict()
+  But 现在python3已经支持了，而且这个创建的字典占内存是普通字典的两倍，忽略吧
+1.8 字典的运算
+  例： prices为字典
+    min_price = min(zip(prices.values(), prices.keys()))
+  讨论：zip函数还是很好用的。
+1.9 查找两字典的相同点
+  例：# Find keys in common
+    a.keys() & b.keys() # { 'x', 'y' }
+    # Find keys in a that are not in b
+    a.keys() - b.keys() # { 'z' }
+    # Find (key,value) pairs in common
+    a.	items() & b.items() # { ('y', 2) }
+  讨论：键视图的一个很少被了解的特性就是它们也支持集合操作，比如集合并、交、差运算。不用先将它们转换成一个 set。字典的 items() 方法返回一个包含 (键，值) 对的元素视图对象。这个对象同样也支持集合操作，并且可以被用来查找两个字典有哪些相同的键值对。尽管字典的 values() 方法并不支持这里介绍的集合操作。因为值视图不能保证所有的值互不相同，不符合集合特性。
+1.10 删除序列相同元素并保持顺序
+  例：def dedupe(items, key=None):
+      seen = set()
+      for item in items:
+      val = item if key is None else key(item)
+      if val not in seen:
+      yield item
+      seen.add(val)
+  讨论：使用了生成器函数让我们的函数更加通用，不仅仅是局限于列表处理。比如，如果你想读取一个文件，消除重复行，你可以很容易像这样做：
+    with open(somefile,'r') as f:
+      for line in dedupe(f):……
+1.11 命名切片
+  问题：你的程序已经出现一大堆已无法直视的硬编码切片下标，然后你想清理下代码。
+  例：SHARES = slice(20, 23)
+    PRICE = slice(31, 37)
+    cost = int(record[SHARES]) * float(record[PRICE])
+  讨论：比如，如果你回过来看看一年前你写的代码，你会摸着脑袋想那时候自己到底想干嘛啊。这里的解决方案是一个很简单的方法让你更加清晰的表达代码到底要做什么。
+1.12 序列中出现次数最多的元素
+  问题：怎样找出一个序列中出现次数最多的元素呢？
+  例： morewords = ['why','are','you','not','looking','in','my','eyes']
+      from collections import Counter
+      word_counts = Counter(morewords)
+      # 出现频率最高的 3 个单词
+      top_three = word_counts.most_common(3)
+      print(top_three)
+      # Outputs [('eyes', 8), ('the', 5), ('look', 4)]
+  讨论：Counter 对象可以接受任意的由可哈希（hashable）元素构成的序列对象，可以很容易的跟数学运算操作相结合
+1.13 通过某个关键字排序一个字典列表
+  问题：你有一个字典列表，你想根据某个或某几个字典字段来排序这个列表。
+  例：rows = [
+      {'fname': 'Brian', 'lname': 'Jones', 'uid': 1003},
+      {'fname': 'David', 'lname': 'Beazley', 'uid': 1002},
+      {'fname': 'John', 'lname': 'Cleese', 'uid': 1001},
+      {'fname': 'Big', 'lname': 'Jones', 'uid': 1004}
+      ]
+      from operator import itemgetter
+      rows_by_fname = sorted(rows, key=itemgetter('fname'))
+      rows_by_uid = sorted(rows, key=itemgetter('uid'))
+      print(rows_by_fname)
+      print(rows_by_uid)
+      代码的输出如下：
+      [{'fname': 'Big', 'uid': 1004, 'lname': 'Jones'},
+      {'fname': 'Brian', 'uid': 1003, 'lname': 'Jones'},
+      {'fname': 'David', 'uid': 1002, 'lname': 'Beazley'},
+      {'fname': 'John', 'uid': 1001, 'lname': 'Cleese'}]
+      [{'fname': 'John', 'uid': 1001, 'lname': 'Cleese'},
+      {'fname': 'David', 'uid': 1002, 'lname': 'Beazley'},
+      {'fname': 'Brian', 'uid': 1003, 'lname': 'Jones'},
+      {'fname': 'Big', 'uid': 1004, 'lname': 'Jones'}]
+  讨论：如果你想要同时在几个字段上面进行排序的时候这种方法是很有用的。
+    rows_by_lfname = sorted(rows, key=itemgetter('lname','fname')) 多重排序，很方便。多重排序的时候用这个吧，单个排序还是lambda快一点。已实践
+1.14 排序不支持原生比较的对象
+  问题：你想排序类型相同的对象，但是他们不支持原生的比较操作。
+  例：from operator import attrgetter
+    sorted(users, key=attrgetter('user_id'))
+  讨论：attrgetter和itemgetter类似，也可以操作多个参数。attrgetter操作的是对象，itemgetter是字典。
+1.15 通过某个字段将记录分组
+  问题：你有一个字典或者实例的序列，然后你想根据某个特定的字段比如 date 来分组迭代访问。
+  例：rows = [
+      {'address': '5412 N CLARK', 'date': '07/01/2012'},
+      {'address': '5148 N CLARK', 'date': '07/04/2012'},
+      {'address': '5800 E 58TH', 'date': '07/02/2012'},
+      {'address': '2122 N CLARK', 'date': '07/03/2012'},
+      {'address': '5645 N RAVENSWOOD', 'date': '07/02/2012'},
+      {'address': '1060 W ADDISON', 'date': '07/02/2012'},
+      {'address': '4801 N BROADWAY', 'date': '07/01/2012'},
+      {'address': '1039 W GRANVILLE', 'date': '07/04/2012'},
+      ]
+          from operator import itemgetter
+      from itertools import groupby
+      # Sort by the desired field first
+      rows.sort(key=itemgetter('date'))
+      # Iterate in groups
+      for date, items in groupby(rows, key=itemgetter('date')):
+      print(date)
+      for i in items:
+      print(' ', i)
+          运行结果：
+          07/01/2012
+      {'date': '07/01/2012', 'address': '5412 N CLARK'}
+      {'date': '07/01/2012', 'address': '4801 N BROADWAY'}
+      07/02/2012
+      {'date': '07/02/2012', 'address': '5800 E 58TH'}
+      {'date': '07/02/2012', 'address': '5645 N RAVENSWOOD'}
+      {'date': '07/02/2012', 'address': '1060 W ADDISON'}
+      07/03/2012
+      {'date': '07/03/2012', 'address': '2122 N CLARK'}
+      07/04/2012
+      {'date': '07/04/2012', 'address': '5148 N CLARK'}
+      {'date': '07/04/2012', 'address': '1039 W GRANVILLE'}
+  讨论：groupby分组，感觉挺有的。但是groupby之前必须用sort先排序，不排序的结果不对。如果不需要排序可以用defaultdict()函数。 defaultdict(list),然后把需要的append进去。
+1.16 过滤序列元素
+  问题：你有一个数据序列，想利用一些规则从中提取出需要的值或者是缩短序列
+  例：可以用filter()或者列表推导式，列表推导式如果元素特别多的话，会很吃内存，建议使
+    用生成器pos = (n for n in mylist if n > 0)
+1.17 从字典中提取子集
+  例: 字典推导式
+1.18 映射名称到序列元素
+  例：命名元组， from collection import namedtuple
+1.19 转换并同时计算数据
+  例：s = sum(x * x for x in nums)
+  讨论：上面的示例向你演示了当生成器表达式作为一个单独参数传递给函数时候的巧妙语法
+  （你并不需要多加一个括号）。
+1.20 合并多个字典或映射
+  例：from collections import ChainMap
+    C = ChainMap(a, b) # a, b为两个字典
+  讨论：对C进行更新删除操作时，只会对第一个出现的键生效。比如a, b都有键x，c[x] = 2，会对a生效，且更改a原本的值，相当于直接操作a。感觉没啥用的函数。
+
