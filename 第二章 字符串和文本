@@ -64,8 +64,9 @@
 	讨论：也可以用生成器
 2.15 字符串中插入变量
 	例：
-        >>> s = '{name} has {n} messages.'
-        >>> s.format(name='Guido', n=37)
+		>>> s = '{name} has {n} messages.'
+		>>> s.format(name='Guido', n=37)
 		>>> name = 'Guido'
 		>>> n = 37
 		>>> s.format_map(vars())
+	
