@@ -1,3 +1,9 @@
 3.1 数字的四舍五入
     例： round(value, ndigits)  这个函数会对5及以下舍去，以上进位。 ndigits可以为负数，作用于十位，百位等
-    
+
+3.2 执行精确的浮点数运算
+    例： from decimal import Decimal
+         a = Decimal('4.2')
+         b = Decimal('2.1')
+         print(a + b)
+         6.3 
