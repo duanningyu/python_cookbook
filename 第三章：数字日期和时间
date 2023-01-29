@@ -12,4 +12,11 @@
     例： x = 1234.56789
          >>> format(x, '0.2f')
          '1234.57'
-3.4 二八十六进制整数
+3.11 随机选择
+    例：random.choice(value) 从可迭代序列中 随机选一个
+        random.sample(value, 3) 随机采样3个
+        random.shuffle(value) 打乱序列
+        random.randint(0, 10)随机生成 0-10整数 包含0和10
+        random.random()生成0-1范围内均匀分布的浮点数
+        random.seed() 修改初始化种子
+        不可使用在密码学中
