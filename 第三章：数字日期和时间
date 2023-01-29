@@ -12,6 +12,7 @@
     例： x = 1234.56789
          >>> format(x, '0.2f')
          '1234.57'
+         
 3.11 随机选择
     例：random.choice(value) 从可迭代序列中 随机选一个
         random.sample(value, 3) 随机采样3个
